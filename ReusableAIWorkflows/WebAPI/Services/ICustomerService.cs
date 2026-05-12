@@ -5,8 +5,8 @@ namespace WebAPI.Services
 {
     public interface ICustomerService
     {
-        Task<IEnumerable<Customer>> GetAllCustomersAsync();
-        Task<Customer?> GetCustomerByIdAsync(int id);
-        Task<Customer> CreateCustomerAsync(CustomerDTO customerDto);
+        Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken cancellationToken = default);
+        Task<Customer?> GetCustomerByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<Customer> CreateCustomerAsync(CustomerDTO customerDto, CancellationToken cancellationToken = default);
     }
 }
