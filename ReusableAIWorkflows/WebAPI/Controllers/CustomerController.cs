@@ -26,6 +26,11 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomerById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Customer ID must be greater than 0.");
+            }
+
             var customer = await _customerService.GetCustomerByIdAsync(id);
             
             if (customer == null)
