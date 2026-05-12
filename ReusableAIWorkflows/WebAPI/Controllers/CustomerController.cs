@@ -17,16 +17,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers(CancellationToken cancellationToken)
         {
-            var customers = await _customerService.GetAllCustomersAsync();
+            var customers = await _customerService.GetAllCustomersAsync(cancellationToken);
             return Ok(customers);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomerById(int id)
+        public async Task<ActionResult<Customer>> GetCustomerById(int id, CancellationToken cancellationToken)
         {
-            var customer = await _customerService.GetCustomerByIdAsync(id);
+            var customer = await _customerService.GetCustomerByIdAsync(id, cancellationToken);
             
             if (customer == null)
             {
@@ -37,14 +37,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> RegisterCustomer([FromBody] CustomerDTO customerDto)
+        public async Task<ActionResult<Customer>> RegisterCustomer([FromBody] CustomerDTO customerDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var customer = await _customerService.CreateCustomerAsync(customerDto);
+            var customer = await _customerService.CreateCustomerAsync(customerDto, cancellationToken);
             
             return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
         }

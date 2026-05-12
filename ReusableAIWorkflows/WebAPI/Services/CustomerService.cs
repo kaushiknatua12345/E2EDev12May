@@ -14,17 +14,17 @@ namespace WebAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers.ToListAsync(cancellationToken);
         }
 
-        public async Task<Customer?> GetCustomerByIdAsync(int id)
+        public async Task<Customer?> GetCustomerByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Customers.FindAsync(id);
+            return await _context.Customers.FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public async Task<Customer> CreateCustomerAsync(CustomerDTO customerDto)
+        public async Task<Customer> CreateCustomerAsync(CustomerDTO customerDto, CancellationToken cancellationToken = default)
         {
             var customer = new Customer
             {
@@ -34,7 +34,7 @@ namespace WebAPI.Services
             };
 
             _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return customer;
         }
