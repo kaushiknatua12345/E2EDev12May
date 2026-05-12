@@ -17,14 +17,15 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerResponseDTO>>> GetAllCustomers()
         {
             var customers = await _customerService.GetAllCustomersAsync();
-            return Ok(customers);
+            var response = customers.Select(MapToResponseDTO);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomerById(int id)
+        public async Task<ActionResult<CustomerResponseDTO>> GetCustomerById(int id)
         {
             var customer = await _customerService.GetCustomerByIdAsync(id);
             
@@ -33,11 +34,11 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
             
-            return Ok(customer);
+            return Ok(MapToResponseDTO(customer));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> RegisterCustomer([FromBody] CustomerDTO customerDto)
+        public async Task<ActionResult<CustomerResponseDTO>> RegisterCustomer([FromBody] CustomerDTO customerDto)
         {
             if (!ModelState.IsValid)
             {
@@ -45,8 +46,20 @@ namespace WebAPI.Controllers
             }
 
             var customer = await _customerService.CreateCustomerAsync(customerDto);
+            var response = MapToResponseDTO(customer);
             
-            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+            return CreatedAtAction(nameof(GetCustomerById), new { id = response.Id }, response);
+        }
+
+        private static CustomerResponseDTO MapToResponseDTO(Customer customer)
+        {
+            return new CustomerResponseDTO
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                EmailId = customer.EmailId,
+                MobileNumber = customer.MobileNumber
+            };
         }
     }
 }
